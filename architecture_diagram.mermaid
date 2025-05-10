@@ -1,0 +1,43 @@
+graph TD
+    subgraph "Google Cloud Platform"
+        subgraph "mynetwork VPC Network" 
+            subgraph "Region 1 Subnet"
+                VM1["mynet-us-vm\n(e2-micro)"]
+            end
+            
+            subgraph "Region 2 Subnet"
+                VM2["mynet-r2-vm\n(e2-micro)"]
+            end
+            
+            fw1[("allow-ssh\n(TCP:22)")]
+            fw2[("allow-icmp\n(ICMP)")]
+            fw3[("allow-rdp\n(TCP:3389)")]
+            fw4[("allow-custom\n(All Internal)")]
+            
+            Internet((Internet))
+        end
+    end
+    
+    Internet -->|External Access| fw1
+    Internet -->|External Access| fw2
+    Internet -->|External Access| fw3
+    
+    fw1 -->|Allow SSH| VM1
+    fw1 -->|Allow SSH| VM2
+    fw2 -->|Allow Ping| VM1
+    fw2 -->|Allow Ping| VM2
+    fw3 -->|Allow RDP| VM1
+    fw3 -->|Allow RDP| VM2
+    
+    VM1 <-->|Internal Traffic| fw4
+    VM2 <-->|Internal Traffic| fw4
+    fw4 <-->|Allow All Internal| VM1
+    fw4 <-->|Allow All Internal| VM2
+    
+    style VM1 fill:#c2e0ff,stroke:#1a73e8,stroke-width:2px
+    style VM2 fill:#c2e0ff,stroke:#1a73e8,stroke-width:2px
+    style fw1 fill:#ffd7a8,stroke:#fa7b17,stroke-width:2px
+    style fw2 fill:#ffd7a8,stroke:#fa7b17,stroke-width:2px
+    style fw3 fill:#ffd7a8,stroke:#fa7b17,stroke-width:2px
+    style fw4 fill:#ffd7a8,stroke:#fa7b17,stroke-width:2px
+    style Internet fill:#f9cb9c,stroke:#e69138,stroke-width:2px
